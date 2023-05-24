@@ -8,5 +8,5 @@ import com.challenge.chat.domain.chat.entity.Chat;
 
 public interface ChatRepository extends JpaRepository<Chat, Long> {
 
-	List<Chat> findAllByRoomIdOrderByCreatedAtAsc(Long ROOM_ID);
+	List<Chat> findAllByRoomIdOrderByCreatedAtAsc(Long id);
 }
