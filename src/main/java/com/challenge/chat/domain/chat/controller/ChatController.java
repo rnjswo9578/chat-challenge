@@ -1,24 +1,29 @@
 package com.challenge.chat.domain.chat.controller;
 
-import com.challenge.chat.domain.chat.dto.ChatDto;
-import com.challenge.chat.domain.chat.dto.ChatRoomDto;
-import com.challenge.chat.domain.chat.dto.EnterUserDto;
-import com.challenge.chat.domain.chat.service.ChatService;
-import com.challenge.chat.global.dto.ResponseDto;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.List;
+import com.challenge.chat.domain.chat.dto.ChatDto;
+import com.challenge.chat.domain.chat.dto.ChatRoomDto;
+import com.challenge.chat.domain.chat.dto.EnterUserDto;
+import com.challenge.chat.domain.chat.service.ChatService;
+import com.challenge.chat.global.dto.ResponseDto;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
@@ -37,8 +42,9 @@ public class ChatController {
 
 	// version 1 단체 채팅방 생성
 	@PostMapping("/chat")
-	public ResponseDto<?> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal User user) {
-		log.info("Controller createChatRoom, 채팅방 생성 User의 email 입니다. {}", user.getUsername());
+	public ResponseDto<String> createChatRoom(@RequestBody ChatRoomDto chatRoomDto,
+		@AuthenticationPrincipal User user) {
+		//log.info("Controller createChatRoom, 채팅방 생성 User의 email 입니다. {}", user.getUsername());
 		return chatService.createChatRoom(chatRoomDto);
 	}
 
@@ -51,7 +57,7 @@ public class ChatController {
 
 	// version 1 단체 채팅방 입장하기
 	@MessageMapping("/chat/enter")
-//	@SendTo("/topic/chat/room")
+	//	@SendTo("/topic/chat/room")
 	public void enterChatRoom(@RequestBody ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) throws Exception {
 		log.info("Controller enterChatRoom, 채팅방 입장");
 		ChatDto newchatdto = chatService.enterChatRoom(chatDto, headerAccessor);
@@ -60,7 +66,7 @@ public class ChatController {
 
 	// version 1 단체 채팅방 채팅 Send
 	@MessageMapping("/chat/send")
-//	@SendTo("/topic/chat/room")
+	//	@SendTo("/topic/chat/room")
 	public void sendChatRoom(ChatDto chatDto) throws Exception {
 		log.info("Controller sendChatRoom, 채팅 SEND {}", chatDto);
 		chatService.sendChatRoom(chatDto);
